@@ -86,6 +86,9 @@ class CRM_Cxn_ApiRouter {
     }
 
     $params['check_permissions'] = 'whitelist';
+
+    dd($params);
+
     return civicrm_api($entity, $action, $params);
   }
 

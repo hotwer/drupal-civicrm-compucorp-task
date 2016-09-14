@@ -47,6 +47,8 @@ class CRM_Profile_Page_Router extends CRM_Core_Page {
    * @return string|void
    */
   public function run($args = NULL) {
+    dd($args);
+
     if ($args[1] !== 'profile') {
       return NULL;
     }

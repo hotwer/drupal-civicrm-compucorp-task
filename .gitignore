@@ -3,8 +3,9 @@ sites/*/*settings*.php
 
 # Ignore paths that contain generated content.
 cache/
-files/
-sites/*/files
+# files/
+# sites/*/files
+# !sites/default/files/civicrm/* # cannot ignore civicrm/ext while devloping custom ext
 sites/*/private
 
 # Ignore default text files
@@ -19,7 +20,7 @@ robots.txt
 /README.txt
 sites/all/README.txt
 sites/all/modules/README.txt
-sites/all/themes/README.txt
+sites/all/themes/<README class="txt"></README>
 
 # Ignore everything but the "sites" folder ( for non core developer )
 web.config
@@ -34,4 +35,4 @@ xmlrpc.php
 /modules
 /profiles
 /scripts
-/themes
+# /themes not ignoring themes, as it has custom code
