@@ -3,6 +3,7 @@
  * This class contains all the function that are called using AJAX (jQuery)
  */
 class CRM_Organisationactivities_Page_AJAX {
+  /*
   public static function getCaseActivity() {
     // Should those params be passed through the validateParams method?
     $caseID = CRM_Utils_Type::validate($_GET['caseID'], 'Integer');
@@ -241,7 +242,7 @@ class CRM_Organisationactivities_Page_AJAX {
    * @param array $params
    *
    * @return array
-   */
+   *
   public static function _convertToCaseActivity($params) {
     if (!$params['activityID'] || !$params['caseID']) {
       return (array('error_msg' => 'required params missing.'));
@@ -354,7 +355,7 @@ class CRM_Organisationactivities_Page_AJAX {
     CRM_Activity_BAO_Activity::copyExtendedActivityData($params);
 
     return (array('error_msg' => $error_msg, 'newId' => $mainActivity->id));
-  }
+  }*/
 
   public static function getContactActivity() {
     $requiredParameters = array(
@@ -376,7 +377,20 @@ class CRM_Organisationactivities_Page_AJAX {
     unset($params['cid']);
 
     // get the contact activities
-    $activities = CRM_Activity_BAO_Activity::getContactActivitySelector($params);
+
+    $ids = self::getOrganisationRelationsByType($params['contact_id'], 'Individual');
+
+    $activities = array('data' => null);
+    foreach ($ids as $id) {
+        $params['contact_id'] = $id;
+        $_activities = CRM_Activity_BAO_Activity::getContactActivitySelector($params);
+
+        if ($activities['data'] == null) {
+            $activities = $_activities;
+        } else {
+            array_push($activities['data'], $_activities['data']);
+        }
+    }
 
     if (!empty($_GET['is_unit_test'])) {
       return $activities;
@@ -407,6 +421,43 @@ class CRM_Organisationactivities_Page_AJAX {
     }
 
     CRM_Utils_JSON::output($activities);
+  }
+
+  public static function getOrganisationRelationsByType($contactId, $customerType = 'Individual')
+  {
+      $apiParams = array(
+          'version' => 3,
+          'contact_id_b' => $contactId,
+      );
+
+      $apiResult = civicrm_api('Relationship', 'Get', $apiParams);
+
+      $ids = array();
+
+      if (!civicrm_error($apiResult)) {
+          $relations = $apiResult['values'];
+
+          foreach($relations as $relation) {
+              $apiParams = array(
+                  'version' => 3,
+                  'id' => $relation['contact_id_a'],
+              );
+
+              $apiResult = civicrm_api('Contact', 'Get', $apiParams);
+
+              if (!civicrm_error($apiResult)) {
+                  $contact = array_shift($apiResult['values']);
+
+                  if ($contact['contact_type'] == $customerType) {
+
+                    array_push($ids, $contact['contact_id']);
+                  }
+
+              }
+          }
+      }
+
+      return $ids;
   }
 
 }

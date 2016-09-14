@@ -5,9 +5,4 @@
     <page_callback>CRM_Organisationactivities_Page_OrganisationActivities</page_callback>
     <title>Organisation Activities</title>
   </item>
-  <item>
-    <path>civicrm/ajax/organisationactivities</path>
-    <page_callback>CRM_Organisationactivities_Page_AJAX::getContactActivity</page_callback>
-    <title>Organisation Activities</title>
-  </item>
 </menu>
